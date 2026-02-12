@@ -284,16 +284,30 @@ const ThyroterraDashboard = () => {
 
   // Logique des messages de fin
   const getFinishContent = () => {
-    if (completedCount < 3) return { msg: "ADJUST YOUR ROUTINE BEFORE YOUR HEALTH DETERIORATES", sub: "Take small steps tomorrow!" };
-    if (completedCount === 3) return { msg: "KEEP GOING!", sub: "You're halfway there, don't stop now!" };
-    return { msg: "PERFECT!", sub: "THE TREES ARE PROUD OF YOU. YOUR FOREST IS BLOOMING TODAY" };
+        if (completedCount < 3) 
+        return { 
+            msg: "⚠️ Your Vitality is Low!", 
+            sub: "Rest and heal! Small quests await tomorrow…" 
+        };
+
+        if (completedCount === 3) 
+        return { 
+            msg: "🌱 Halfway Through the Journey!", 
+            sub: "Your strength grows—keep completing your daily quests!" 
+        };
+
+        return { 
+        msg: "🌳 Champion of the Forest!", 
+        sub: "Your health is thriving! The forest celebrates your dedication!" 
+        };
+
   };
 
   // --- ÉCRAN DE RÉSULTAT FINAL ---
   if (isFinished) {
     const content = getFinishContent();
     return (
-      <div className="min-h-screen bg-[url(./bg.png)] font-mono p-4 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-[url(./bg.png)] font-pixel p-4 flex flex-col items-center justify-center">
          <motion.div 
           initial={{ scale: 0.8, opacity: 0 }} 
           animate={{ scale: 1, opacity: 1 }}
@@ -340,7 +354,7 @@ const ThyroterraDashboard = () => {
 
   // --- ÉCRAN PRINCIPAL DU DASHBOARD ---
   return (
-    <div className="min-h-screen bg-[url(./bg.png)] bg-cover font-mono p-4 flex flex-col items-center">
+    <div className="min-h-screen bg-[url(./bg.png)] bg-cover font-pixel p-4 flex flex-col items-center">
       {/* Header */}
       <div className="w-full max-w-2xl flex justify-between items-center mb-6">
 

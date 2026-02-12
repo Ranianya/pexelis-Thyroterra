@@ -95,7 +95,7 @@ const CheckList = ({ onAddToRoutine }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-mono p-4 flex flex-col items-center relative overflow-hidden">
+    <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-pixel p-4 flex flex-col items-center relative overflow-hidden">
 
       {/* Header */}
         <div className="w-full max-w-2xl flex justify-between items-center mb-6 relative">

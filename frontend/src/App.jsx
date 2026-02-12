@@ -8,7 +8,7 @@ import FAQSystem from './pages/FAQSystem';
 function App() {
   return (
     <Router>
-      <Routes>
+      <Routes className="font-pixel">
         <Route path="/" element={<ThyroterraDashboard />} />
         <Route path="/thyroterra" element={<ThyroterraDashboard />} />
         <Route path="/FAQ" element={<FAQSystem />} />
@@ -20,3 +20,19 @@ function App() {
 }
 
 export default App;
+
+
+
+
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// function App() {
+//   return (
+//     <div className="font-pixel">
+//        <p className="text-center text-2xl mt-10">Welcome to Thyroterra!</p>
+//     </div>
+
+//   );
+// }
+
+// export default App;

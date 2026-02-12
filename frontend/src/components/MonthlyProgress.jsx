@@ -339,6 +339,7 @@
 
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Activity, 
   Stethoscope, 
@@ -378,15 +379,12 @@ const MonthlyProgress = ({ monthlyStats }) => {
       'bottom-right': `${base} bottom-[22%] right-[2%] sm:right-[10%]`,
     };
     return positions[pos];
-  };
-    const handleBack = () => {
-    setView('list');
-    setUserQuestion('');
-    setOpenIndex(null);
+    const navigate = useNavigate();
   };
 
+
   return (
-    <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-mono p-3 sm:p-4 overflow-x-hidden flex flex-col items-center relative">
+    <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-pixel p-3 sm:p-4 overflow-x-hidden flex flex-col items-center relative">
 
       {/* Clouds */}
       <motion.div 
@@ -408,20 +406,17 @@ const MonthlyProgress = ({ monthlyStats }) => {
       {/* Header */}
         <div className="w-full flex justify-between items-center mb-6">
           <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
-            <img src="./logo.png" alt="logo" className="w-full h-full object-contain cursor-pointer" onClick={handleBack}/>
+            <img src="./logo.png" alt="logo" className="w-full h-full object-contain cursor-pointer" />
           </div>
 
-          <div className="flex gap-2">
-            { (
-              <button
-                onClick={() => { localStorage.clear(); window.location.reload(); }}
+            <div className="flex gap-2">
+            <button
+                onClick={() => navigate(-1)} // <- revient à la page précédente
                 className="bg-black p-2 rounded-lg text-white hover:scale-110 transition-transform"
-              >
+            >
                 <RotateCcw size={18} className="sm:w-5 sm:h-5"/>
-              </button>
-            )}
-
-          </div>
+            </button>
+            </div>
         </div>
 
       {/* Title */}
@@ -522,11 +517,6 @@ const MonthlyProgress = ({ monthlyStats }) => {
         </div>
 
         </div>
-
-
-
-
-      
       {/* Sol Pixelisé Multi-couches */}
       <div className="absolute bottom-0 w-full z-10">
         <div className="h-4 bg-[#47A548] w-full border-t-2 border-[#2F5B2F]" />
