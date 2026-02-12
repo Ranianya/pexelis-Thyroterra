@@ -1,6 +1,19 @@
 import prisma from "../config/prisma.js";
 
 async function main() {
+  console.log("🚀 Seed process started...");
+
+  // --------------------------
+  // 0. Clean old data to avoid duplicates
+  // --------------------------
+  console.log("Cleaning old data...");
+  // Order matters due to Foreign Key constraints
+  await prisma.userProgress.deleteMany();
+  await prisma.habit.deleteMany();
+  await prisma.habitCategory.deleteMany();
+  await prisma.spot.deleteMany();
+  await prisma.land.deleteMany();
+
   console.log("Seeding database...");
 
   // --------------------------
@@ -56,36 +69,27 @@ async function main() {
   // 4. Create Habits
   // --------------------------
   const habitsData = [
-    // Thyroid Treatment
     { categoryId: categories[0].id, taskName: "Take Levothyroxine" },
     { categoryId: categories[0].id, taskName: "Wait 30-60 min fasting" },
     { categoryId: categories[0].id, taskName: "Log TSH levels" },
     { categoryId: categories[0].id, taskName: "Schedule Neck Ultrasound" },
-
-    // Wellness Forest
     { categoryId: categories[1].id, taskName: "Drink water" },
     { categoryId: categories[1].id, taskName: "Stretch 5 min" },
     { categoryId: categories[1].id, taskName: "Meditate 10 min" },
   ];
 
-  const habits = [];
   for (const habit of habitsData) {
-    const createdHabit = await prisma.habit.create({ data: habit });
-    habits.push(createdHabit);
+    await prisma.habit.create({ data: habit });
   }
-  
-  console.log("Habits created:", habits.length);
-
-    console.log("Habits created:", habits.length);
-
-
-  
+  console.log("Habits created:", habitsData.length);
 
   console.log("✅ Database seeding completed!");
-};
+} // <--- This was the missing/duplicate bracket fix
+
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Seed failed:", e);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
