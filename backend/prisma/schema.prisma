@@ -25,7 +25,7 @@ model User {
   username       String
   heartsCount    Int      @default(2)
   email          String   @unique
-  password       String   // <-- Add this
+  password       String
   currentLandId  Int?
   currentSpotId  Int?
 
@@ -38,24 +38,25 @@ model User {
   createdAt DateTime @default(now())
 }
 
-
 model Land {
   id         Int     @id @default(autoincrement())
   isUnlocked Boolean @default(false)
 
   spots Spot[]
-
   users User[] @relation("CurrentLand")
 }
 
 model Spot {
   id         Int     @id @default(autoincrement())
   landId     Int
-  monthName  Int    // 1-12
+  monthName  Int     // 1-12
   isUnlocked Boolean @default(false)
 
   land Land @relation(fields: [landId], references: [id])
   currentSpotUsers User[] @relation("CurrentSpot")
+
+  // Relation with UserProgress
+  userProgress UserProgress[]
 }
 
 model UserProgress {
@@ -74,27 +75,41 @@ model UserProgress {
 }
 
 model MonthlyProgressDisplay {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
-  user      User    @relation(fields: [userId], references: [id])
   month     Int
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
-CREATE TABLE habit_categories (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    category_name VARCHAR(50) -- 'Thyroid Treatment' or 'Wellness Forest'
-);
+//////////////////////////////////////////////////
+// HABITS
+//////////////////////////////////////////////////
 
-CREATE TABLE habit (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    category_id INT,
-    task_name VARCHAR(255), -- e.g., 'Take Levothyroxine'
-    FOREIGN KEY (category_id) REFERENCES habit_categories(id)
-);
-CREATE TABLE faq (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    question TEXT NOT NULL, -- e.g., 'Which gland is affected?'
-    answer TEXT NOT NULL
-);
+model HabitCategory {
+  id           Int     @id @default(autoincrement())
+  categoryName String
 
+  habits Habit[]
+}
+
+model Habit {
+  id         Int           @id @default(autoincrement())
+  categoryId Int
+  taskName   String
+  check      Boolean       @default(false)
+
+  category HabitCategory @relation(fields: [categoryId], references: [id])
+  progress UserProgress[]
+}
+
+//////////////////////////////////////////////////
+// FAQ
+//////////////////////////////////////////////////
+
+model Faq {
+  id       Int    @id @default(autoincrement())
+  question String
+  answer   String
+}
