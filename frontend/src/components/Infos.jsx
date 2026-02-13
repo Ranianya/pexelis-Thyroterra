@@ -6,7 +6,7 @@ const Infos = () => {
       {/* On utilise items-start pour l'alignement de base, 
          et gap-6 pour l'espace entre les cartes 
       */}
-      <div className='flex flex-wrap justify-center items-start gap-20 px-10'> 
+      <div  className='flex flex-wrap justify-center items-start gap-20 px-10'> 
 
         {/* 1. Daily: The Life Spot */}
         <div className='bg-[#a8b6a4] mt-24 p-8 rounded-[30px] max-w-[350px] h-[400px] shadow-lg'> 

@@ -62,16 +62,19 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full z-[100] px-6 py-4 flex items-center justify-between font-pixel bg-[#5A7554] shadow-lg">
       
-      {/* LEFT SIDE: LOGO (Ta taille originale conservée) */}
-      <div className="flex items-center z-50">
-        <button onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-          <img 
-            src="/logo.png" 
-            alt="Thyroterra Logo" 
-            className="h-10 md:h-12 w-auto object-contain cursor-pointer hover:scale-105 transition-transform" 
-          />
-        </button>
-      </div>
+      {/* LEFT SIDE: LOGO  */}
+      <div className="flex items-center z-50 w-32 h-10"> {/* Largeur fixe pour réserver l'espace à gauche */}
+  <button 
+    onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+    className="absolute top-1/2 -translate-y-1/2 transition-transform hover:scale-110"
+  >
+    <img 
+      src="/logo.png" 
+      alt="Thyroterra Logo" 
+      className="h-16 md:h-40 w-auto object-contain drop-shadow-md" 
+    />
+  </button>
+</div>
 
       {/* CENTER: DESKTOP NAVIGATION */}
       <ul className="hidden md:flex items-center gap-8 lg:gap-12">

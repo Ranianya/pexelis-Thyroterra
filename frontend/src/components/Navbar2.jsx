@@ -18,16 +18,19 @@ const Navbar2 = () => {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 px-6 py-2 grid grid-cols-3 items-center font-pixel bg-[#5A7554] border-b-4 border-black/20 shadow-lg">
       
-      {/* COLONNE 1 - LOGO (Plus grand) */}
-      <div className="flex justify-start">
-        <Link to="/" className="cursor-pointer hover:scale-105 transition-transform">
-          <img 
-            src="/logo.png" 
-            alt="Thyroterra Logo" 
-            className="h-16 md:h-24 w-auto object-contain" // Taille augmentée
-          />
-        </Link>
-      </div>
+      {/* LEFT SIDE: LOGO  */}
+      <div className="flex items-center z-50 w-32 h-10"> {/* Largeur fixe pour réserver l'espace à gauche */}
+  <button 
+    onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+    className="absolute top-1/2 -translate-y-1/2 transition-transform hover:scale-110"
+  >
+    <img 
+      src="/logo.png" 
+      alt="Thyroterra Logo" 
+      className="h-16 md:h-40 w-auto object-contain drop-shadow-md" 
+    />
+  </button>
+</div>
 
       {/* COLONNE 2 - MENU (centré) */}
       <ul className="hidden md:flex items-center justify-center gap-10 lg:gap-14">
