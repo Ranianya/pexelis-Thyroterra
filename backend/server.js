@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 import landRoutes from "./routes/landRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import monthlyRoutes from "./routes/monthlyRoutes.js";
 dotenv.config();
 console.log("--- DEBUG ENV ---");
 console.log("PORT:", process.env.PORT);
@@ -22,6 +23,7 @@ app.use("/api/game", gameRoutes);
 console.log("Loading Lands Routes...");
 app.use("/api/lands", landRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/monthly", monthlyRoutes);
 // Test route
 app.get("/", (req, res) => {
   res.send("ThyroTerra Backend Running 🚀");
