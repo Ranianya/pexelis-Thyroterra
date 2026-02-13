@@ -10,7 +10,6 @@ datasource db {
 //////////////////////////////////////////////////
 // ENUMS
 //////////////////////////////////////////////////
-
 enum ProgressStatus {
   completed
   missed
@@ -34,50 +33,47 @@ model User {
 
   progress       UserProgress[]
   monthlyDisplay MonthlyProgressDisplay[]
-
-  // All habits the user has checked or added
   habits         UserHabit[]
-
-  // Private habits created by the user
   privateHabits  Habit[] @relation("UserPrivateHabits")
+
+  unlockedLands  UserLand[]
+  unlockedSpots  UserSpot[]
 
   createdAt DateTime @default(now())
 }
 
 model Land {
   id         Int     @id @default(autoincrement())
-  isUnlocked Boolean @default(false)
-
-  spots Spot[]
-  users User[] @relation("CurrentLand")
+  name       String
+  spots      Spot[]
+  users      User[] @relation("CurrentLand")
+  userUnlocks UserLand[]
 }
 
 model Spot {
   id         Int     @id @default(autoincrement())
   landId     Int
   monthName  Int     // 1-12
-  isUnlocked Boolean @default(false)
-
-  land Land @relation(fields: [landId], references: [id])
-  currentSpotUsers User[] @relation("CurrentSpot")
+  land       Land @relation(fields: [landId], references: [id])
 
   userProgress UserProgress[]
   days         Day[]
   monthlyProgressDisplays MonthlyProgressDisplay[]
+  currentSpotUsers User[] @relation("CurrentSpot")
+  userUnlocks UserSpot[]
 }
 
 model Day {
   id        Int    @id @default(autoincrement())
   spotId    Int
   dayNumber Int    // 1-31
-
   spot      Spot @relation(fields: [spotId], references: [id])
   progress  UserProgress[]
 
   @@unique([spotId, dayNumber])
 }
 
-model UserProgress { 
+model UserProgress {
   id      Int            @id @default(autoincrement())
   userId  Int
   spotId  Int
@@ -101,7 +97,7 @@ model MonthlyProgressDisplay {
   user               User     @relation(fields: [userId], references: [id])
   spot               Spot     @relation(fields: [spotId], references: [id])
 
-  @@unique([userId, spotId]) // 👈 ADD THIS LINE
+  @@unique([userId, spotId])
 }
 
 //////////////////////////////////////////////////
@@ -111,7 +107,6 @@ model MonthlyProgressDisplay {
 model HabitCategory {
   id           Int     @id @default(autoincrement())
   categoryName String
-
   habits Habit[]
 }
 
@@ -122,9 +117,7 @@ model Habit {
   userId     Int?   // null = global, number = private
 
   category HabitCategory @relation(fields: [categoryId], references: [id])
-
-  // Private habits relation to user
-  user User? @relation("UserPrivateHabits", fields: [userId], references: [id], map: "FK_Habit_User")
+  user     User? @relation("UserPrivateHabits", fields: [userId], references: [id], map: "FK_Habit_User")
 
   progress   UserProgress[]
   userHabits UserHabit[]
@@ -132,16 +125,42 @@ model Habit {
 
 model UserHabit {
   id      Int @id @default(autoincrement())
-
   userId  Int
   habitId Int
-
   isChecked Boolean @default(false)
 
   user  User  @relation(fields: [userId], references: [id])
   habit Habit @relation(fields: [habitId], references: [id])
 
   @@unique([userId, habitId])
+}
+
+//////////////////////////////////////////////////
+// USER UNLOCKS
+//////////////////////////////////////////////////
+
+model UserLand {
+  id       Int @id @default(autoincrement())
+  userId   Int
+  landId   Int
+  unlocked Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+  land Land @relation(fields: [landId], references: [id])
+
+  @@unique([userId, landId])
+}
+
+model UserSpot {
+  id       Int @id @default(autoincrement())
+  userId   Int
+  spotId   Int
+  unlocked Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+  spot Spot @relation(fields: [spotId], references: [id])
+
+  @@unique([userId, spotId])
 }
 
 //////////////////////////////////////////////////
