@@ -1,91 +1,144 @@
 import prisma from "../config/prisma.js";
 
 async function main() {
-  console.log("Seeding database...");
+  console.log("🌱 Seeding database...");
 
-  // --------------------------
-  // 1. Create Lands
-  // --------------------------
+  // 🧹 Clean database (respect relation order)
+  await prisma.userProgress.deleteMany();
+  await prisma.monthlyProgressDisplay.deleteMany();
+  await prisma.userHabit.deleteMany();
+  await prisma.userSpot.deleteMany();
+  await prisma.userLand.deleteMany();
+  await prisma.day.deleteMany();
+  await prisma.spot.deleteMany();
+  await prisma.land.deleteMany();
+  await prisma.habit.deleteMany();
+  await prisma.habitCategory.deleteMany();
+  await prisma.faq.deleteMany();
+
+  //////////////////////////////////////////////////
+  // 1️⃣ Create Lands
+  //////////////////////////////////////////////////
   const landsData = [
-    { isUnlocked: true },  // First land unlocked
-    { isUnlocked: false },
-    { isUnlocked: false },
+    { name: "Thyroterra I" },
+    { name: "Thyroterra II" },
+    { name: "Thyroterra III" },
   ];
 
   const lands = [];
+
   for (const land of landsData) {
     const createdLand = await prisma.land.create({ data: land });
     lands.push(createdLand);
   }
-  console.log("Lands created:", lands.length);
 
-  // --------------------------
-  // 2. Create Spots (12 per Land)
-  // --------------------------
+  console.log("✅ Lands created:", lands.length);
+
+  //////////////////////////////////////////////////
+  // 2️⃣ Create Spots (12 per Land)
+  //////////////////////////////////////////////////
   const spots = [];
+
   for (const land of lands) {
     for (let month = 1; month <= 12; month++) {
       const spot = await prisma.spot.create({
         data: {
           landId: land.id,
           monthName: month,
-          isUnlocked: month === 1 && land.id === 1, // unlock first spot of first land
         },
       });
+
       spots.push(spot);
     }
   }
-  console.log("Spots created:", spots.length);
 
-  // --------------------------
-  // 3. Create Habit Categories
-  // --------------------------
-  const categoriesData = [
-    { categoryName: "Thyroid Treatment" },
-    { categoryName: "Wellness Forest" },
-  ];
+  console.log("✅ Spots created:", spots.length);
 
-  const categories = [];
-  for (const cat of categoriesData) {
-    const createdCat = await prisma.habitCategory.create({ data: cat });
-    categories.push(createdCat);
+  //////////////////////////////////////////////////
+  // 3️⃣ Create Days (1–31 per Spot)
+  //////////////////////////////////////////////////
+  const days = [];
+
+  for (const spot of spots) {
+    for (let dayNumber = 1; dayNumber <= 31; dayNumber++) {
+      const day = await prisma.day.create({
+        data: {
+          spotId: spot.id,
+          dayNumber,
+        },
+      });
+
+      days.push(day);
+    }
   }
-  console.log("Habit categories created:", categories.length);
 
-  // --------------------------
-  // 4. Create Habits
-  // --------------------------
-  const habitsData = [
-    // Thyroid Treatment
-    { categoryId: categories[0].id, taskName: "Take Levothyroxine" },
-    { categoryId: categories[0].id, taskName: "Wait 30-60 min fasting" },
-    { categoryId: categories[0].id, taskName: "Log TSH levels" },
-    { categoryId: categories[0].id, taskName: "Schedule Neck Ultrasound" },
+  console.log("✅ Days created:", days.length);
 
-    // Wellness Forest
-    { categoryId: categories[1].id, taskName: "Drink water" },
-    { categoryId: categories[1].id, taskName: "Stretch 5 min" },
-    { categoryId: categories[1].id, taskName: "Meditate 10 min" },
-  ];
+  //////////////////////////////////////////////////
+  // 4️⃣ Habit Categories
+  //////////////////////////////////////////////////
+  const categories = await prisma.habitCategory.createMany({
+    data: [
+      { categoryName: "Thyroid Treatment" },
+      { categoryName: "Wellness Forest" },
+    ],
+  });
 
-  const habits = [];
-  for (const habit of habitsData) {
-    const createdHabit = await prisma.habit.create({ data: habit });
-    habits.push(createdHabit);
-  }
-  
-  console.log("Habits created:", habits.length);
+  const allCategories = await prisma.habitCategory.findMany();
 
-    console.log("Habits created:", habits.length);
+  console.log("✅ Habit categories created:", allCategories.length);
 
+  //////////////////////////////////////////////////
+  // 5️⃣ Habits
+  //////////////////////////////////////////////////
+  const thyroidCategory = allCategories.find(
+    (c) => c.categoryName === "Thyroid Treatment"
+  );
 
-  
+  const wellnessCategory = allCategories.find(
+    (c) => c.categoryName === "Wellness Forest"
+  );
 
-  console.log("✅ Database seeding completed!");
-};
+  await prisma.habit.createMany({
+    data: [
+      { categoryId: thyroidCategory.id, taskName: "Take Levothyroxine" },
+      { categoryId: thyroidCategory.id, taskName: "Wait 30-60 min fasting" },
+      { categoryId: thyroidCategory.id, taskName: "Log TSH levels" },
+      { categoryId: thyroidCategory.id, taskName: "Schedule Neck Ultrasound" },
+
+      { categoryId: wellnessCategory.id, taskName: "Drink water" },
+      { categoryId: wellnessCategory.id, taskName: "Stretch 5 min" },
+      { categoryId: wellnessCategory.id, taskName: "Meditate 10 min" },
+    ],
+  });
+
+  console.log("✅ Habits created");
+
+  //////////////////////////////////////////////////
+  // 6️⃣ FAQ (optional)
+  //////////////////////////////////////////////////
+  await prisma.faq.createMany({
+    data: [
+      {
+        question: "What is Thyroterra?",
+        answer: "A gamified habit tracker for thyroid care.",
+      },
+      {
+        question: "How do I unlock lands?",
+        answer: "Complete your habits consistently.",
+      },
+    ],
+  });
+
+  console.log("✅ FAQ created");
+
+  console.log("🎉 Database seeding completed successfully!");
+}
+
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Seeding failed:", e);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

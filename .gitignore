@@ -1,0 +1,69 @@
+# =========================
+# GLOBAL
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# FRONTEND (Vite/React)
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.*
+
+# Vite cache
+frontend/node_modules/.vite/
+
+# =========================
+# BACKEND (Node/Express)
+# =========================
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/.env
+backend/.env.*
+
+# Uploaded files (if any)
+backend/uploads/
+backend/tmp/
+
+# =========================
+# Coverage & Testing
+# =========================
+coverage/
+*.lcov
+.nyc_output/
+
+# =========================
+# Misc
+# =========================
+*.tgz
+*.zip
+*.tar

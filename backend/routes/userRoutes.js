@@ -8,4 +8,5 @@ router.get("/faq", getFaqs);
 router.get("/hearts", protect, getHearts);
 router.put("/hearts", protect, updateHearts);
 
+
 export default router;
