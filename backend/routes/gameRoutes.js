@@ -11,3 +11,4 @@ router.post("/initialize", protect, initializeUserJourney);
 router.get("/journey", protect, getCurrentJourney);
 
 export default router;
+

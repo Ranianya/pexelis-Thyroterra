@@ -1,13 +1,16 @@
 import express from "express";
-import {
-  getTodayProgress,
-  updateProgress
-} from "../controllers/progressController.js";
+import { getTodaysHabits, updateHabitProgress } from "../controllers/progressController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/today/:userId", getTodayProgress);
+// Get today's habits
+router.get("/today", protect, getTodaysHabits);
 
-router.put("/:id", updateProgress);
+// Mark habit as completed
+router.put("/:id", protect, updateHabitProgress);
 
 export default router;
+
+
+
