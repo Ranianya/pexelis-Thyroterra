@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'; 
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero'); // Pour le suivi du scroll
+  const [activeSection, setActiveSection] = useState('hero'); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,11 +16,9 @@ const Navbar = () => {
     { name: 'FAQ', href: '/FAQ', type: 'link' },
   ];
 
-  // Détecte quelle section est à l'écran pendant le scroll
   useEffect(() => {
     const handleScroll = () => {
       if (location.pathname !== '/') return;
-
       const sections = ['hero', 'about', 'story'];
       const scrollPosition = window.scrollY + 150;
 
@@ -34,14 +32,12 @@ const Navbar = () => {
         }
       });
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
   const handleNavClick = (link) => {
     setIsOpen(false);
-    
     if (link.type === 'scroll') {
       const element = document.getElementById(link.href);
       if (element) {
@@ -60,104 +56,111 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-[100] px-6 py-4 flex items-center justify-between font-pixel bg-[#5A7554] shadow-lg">
+    <nav className="fixed top-0 left-0 w-full z-[100] px-4 py-3 font-pixel bg-[#5A7554]">
       
-      {/* LEFT SIDE: LOGO  */}
-      <div className="flex items-center z-50 w-32 h-10"> {/* Largeur fixe pour réserver l'espace à gauche */}
-  <button 
-    onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-    className="absolute top-1/2 -translate-y-1/2 transition-transform hover:scale-110"
-  >
-    <img 
-      src="/logo.png" 
-      alt="Thyroterra Logo" 
-      className="h-16 md:h-40 w-auto object-contain drop-shadow-md" 
-    />
-  </button>
-</div>
+      {/* HUD CONTAINER - Utilise flex et justify-center pour les liens centraux */}
+      <div className="max-w-6xl mx-auto flex items-center justify-center bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-full px-5 py-2 shadow-[0_6px_0_0_#b89a67] relative min-h-[50px]">
+        
+        {/* LEFT SIDE: LOGO - Position absolue pour ne pas pousser les titres */}
+        <div className="absolute left-4 md:left-6 flex items-center">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="flex items-center"
+          >
+            <img 
+              src="/logo.png" 
+              alt="Thyroterra" 
+              className="h-14 md:h-24 w-auto object-contain drop-shadow-md" 
+              style={{ transform: 'translateY(-2px)' }} 
+            />
+          </motion.button>
+        </div>
 
-      {/* CENTER: DESKTOP NAVIGATION */}
-      <ul className="hidden md:flex items-center gap-8 lg:gap-12">
-        {navLinks.map((link) => {
-          // Condition pour que le titre soit blanc
-          const isWhite = 
-            (link.type === 'scroll' && activeSection === link.href && location.pathname === '/') || 
-            (link.type === 'link' && location.pathname === link.href);
+        {/* CENTER: TITLES - Parfaitement centrés grâce au flex parent */}
+        <ul className="hidden md:flex items-center gap-6 lg:gap-10">
+          {navLinks.map((link) => {
+            const isActive = 
+              (link.type === 'scroll' && activeSection === link.href && location.pathname === '/') || 
+              (link.type === 'link' && location.pathname === link.href);
 
-          return (
-            <li key={link.name}>
-              <button
-                onClick={() => handleNavClick(link)}
-                className={`text-sm lg:text-base font-black tracking-tight transition-colors uppercase cursor-pointer
-                  ${isWhite ? 'text-white' : 'text-black hover:text-white'}`}
-              >
-                {link.name}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+            return (
+              <li key={link.name}>
+                <button
+                  onClick={() => handleNavClick(link)}
+                  className={`relative text-[10px] lg:text-[11px] font-black tracking-widest transition-all uppercase flex items-center gap-2
+                    ${isActive ? 'text-[#065C16]' : 'text-stone-500 hover:text-black'}`}
+                >
+                  {isActive && (
+                    <motion.span 
+                        layoutId="activeDot" 
+                        className="w-2 h-2 bg-[#065C16] rounded-full shadow-[0_0_8px_#99f6b4]" 
+                    />
+                  )}
+                  {link.name}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
 
-      {/* RIGHT SIDE: ACTIONS */}
-      <div className="hidden md:flex items-center">
-        <RouterLink to="/signin" className="relative group transition-transform hover:scale-105 active:scale-95">
-          <img 
-            src="/sign.png" 
-            alt="SignIn" 
-            className="h-10 lg:h-12 w-auto object-contain"
-          />
-          <span className="absolute inset-0 flex items-center justify-center text-black font-black text-[10px] lg:text-xs pt-1 uppercase">
-            Sign in
-          </span>
-        </RouterLink>
+        {/* RIGHT SIDE: ENTER BUTTON - Position absolue à droite */}
+        <div className="hidden md:flex items-center absolute right-4 md:right-6">
+          <RouterLink to="/signin">
+            <motion.button 
+              whileHover={{ scale: 1.05, filter: "brightness(1.1)" }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-[#4a5a42] border-2 border-[#607456] rounded-xl px-5 py-1 shadow-[inset_0_2px_4px_rgba(255,255,255,0.2)]"
+            >
+              <span className="text-white font-black text-[9px] uppercase tracking-wider">
+                Enter
+              </span>
+            </motion.button>
+          </RouterLink>
+        </div>
+
+        {/* MOBILE BURGER - Position absolue à droite en mobile */}
+        <div className="md:hidden absolute right-4 flex items-center z-50">
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-stone-700 p-1"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
-      {/* MOBILE BURGER BUTTON */}
-      <div className="md:hidden flex items-center gap-4 z-50">
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-black bg-white/20 rounded-lg border-2 border-black active:scale-90 transition-all"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* MOBILE MENU OVERLAY */}
+      {/* MOBILE MENU (Inchangé) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 bg-[#5A7554] flex flex-col items-center justify-center gap-8 md:hidden z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center md:hidden z-40 p-6"
           >
-            {navLinks.map((link) => {
-              const isWhite = 
-                (link.type === 'scroll' && activeSection === link.href && location.pathname === '/') || 
-                (link.type === 'link' && location.pathname === link.href);
-
-              return (
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="bg-[#f1e4c3] border-[4px] border-[#b89a67] p-8 rounded-[24px] w-full max-w-xs flex flex-col gap-4 shadow-[0_10px_0_0_#b89a67]"
+            >
+              <p className="text-[#b89a67] text-[10px] font-black text-center border-b border-[#b89a67] pb-2 mb-2 tracking-widest uppercase">Quest Menu</p>
+              {navLinks.map((link) => (
                 <button
                   key={link.name}
                   onClick={() => handleNavClick(link)}
-                  className={`text-2xl font-black uppercase tracking-widest ${isWhite ? 'text-white' : 'text-black hover:text-white'}`}
+                  className="text-lg font-black uppercase text-stone-800 hover:text-green-800 flex items-center gap-3 transition-colors"
                 >
+                  <ChevronRight size={18} className="text-green-700" />
                   {link.name}
                 </button>
-              );
-            })}
-            
-            <RouterLink 
-              to="/signin" 
-              onClick={() => setIsOpen(false)}
-              className="relative mt-4 scale-150"
-            >
-              <img src="/sign.png" alt="SignIn" className="h-10 w-auto" />
-              <span className="absolute inset-0 flex items-center justify-center text-black font-black text-[10px] pt-1 uppercase">
-                Sign in
-              </span>
-            </RouterLink>
+              ))}
+              <RouterLink to="/signin" onClick={() => setIsOpen(false)} className="mt-4">
+                 <button className="w-full bg-[#4a5a42] text-white font-black py-3 rounded-xl uppercase text-xs tracking-widest">
+                    Enter Land
+                 </button>
+              </RouterLink>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar2 = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation(); // Pour savoir sur quelle page on est
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -16,66 +18,113 @@ const Navbar2 = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 px-6 py-2 grid grid-cols-3 items-center font-pixel bg-[#5A7554] border-b-4 border-black/20 shadow-lg">
+    <nav className="fixed top-0 left-0 w-full z-[100] px-4 py-3 font-pixel bg-transparent">
       
-      {/* LEFT SIDE: LOGO  */}
-      <div className="flex items-center z-50 w-32 h-10"> {/* Largeur fixe pour réserver l'espace à gauche */}
-  <button 
-    onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-    className="absolute top-1/2 -translate-y-1/2 transition-transform hover:scale-110"
-  >
-    <img 
-      src="/logo.png" 
-      alt="Thyroterra Logo" 
-      className="h-16 md:h-40 w-auto object-contain drop-shadow-md" 
-    />
-  </button>
-</div>
+      {/* HUD CONTAINER - justify-center pour aligner les titres au milieu */}
+      <div className="max-w-6xl mx-auto flex items-center justify-center bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-full px-5 py-2 shadow-[0_6px_0_0_#b89a67] relative min-h-[50px]">
+        
+        {/* LEFT SIDE: LOGO - Absolute pour ne pas pousser les titres */}
+        <div className="absolute left-4 md:left-6 flex items-center">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="flex items-center"
+          >
+            <img 
+              src="/logo.png" 
+              alt="Thyroterra" 
+              className="h-14 md:h-24 w-auto object-contain drop-shadow-md" 
+              style={{ transform: 'translateY(-2px)' }} 
+            />
+          </motion.button>
+        </div>
 
-      {/* COLONNE 2 - MENU (centré) */}
-      <ul className="hidden md:flex items-center justify-center gap-10 lg:gap-14">
-        {navLinks.map((link) => {
-          // On vérifie si le chemin actuel correspond au lien
-          const isActive = location.pathname === link.href;
+        {/* CENTER: NAVIGATION LINKS - Parfaitement centrés */}
+        <ul className="hidden md:flex items-center gap-6 lg:gap-10">
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.href;
 
-          return (
-            <li key={link.name}>
-              <Link
-                to={link.href}
-                className={`text-base lg:text-lg font-black tracking-tight transition-colors uppercase 
-                  ${isActive ? 'text-white' : 'text-black hover:text-white'}`}
-              >
-                {link.name}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+            return (
+              <li key={link.name}>
+                <Link
+                  to={link.href}
+                  className={`relative text-[10px] lg:text-[11px] font-black tracking-widest transition-all uppercase flex items-center gap-2
+                    ${isActive ? 'text-[#065C16]' : 'text-stone-500 hover:text-black'}`}
+                >
+                  {isActive && (
+                    <motion.span 
+                      layoutId="activeDot2" 
+                      className="w-2 h-2 bg-[#065C16] rounded-full shadow-[0_0_8px_#99f6b4]" 
+                    />
+                  )}
+                  {link.name}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
 
-      {/* COLONNE 3 - BOUTONS (alignés à droite) */}
-      <div className="flex items-center justify-end gap-4">
-        <Link 
-          to="/" 
-          className="hidden sm:block relative group transition-transform hover:scale-105 active:scale-95"
-        >
-          <img 
-            src="/sign.png" 
-            alt="Sign Out" 
-            className="h-8 md:h-10 w-auto object-contain"
-          />
-          <span className="absolute inset-0 flex items-center justify-center text-black text-[8px] md:text-[10px] font-black pt-1 uppercase">
-            Sign out
-          </span>
-        </Link>
+        {/* RIGHT SIDE: EXIT BUTTON - Absolute à droite */}
+        <div className="hidden md:flex items-center absolute right-4 md:right-6">
+          <Link to="/">
+            <motion.button 
+              whileHover={{ scale: 1.05, filter: "brightness(1.1)" }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-[#4a5a42] border-2 border-[#607456] rounded-xl px-5 py-1 shadow-[inset_0_2px_4px_rgba(255,255,255,0.2)]"
+            >
+              <span className="text-white font-black text-[9px] uppercase tracking-wider">
+                Exit
+              </span>
+            </motion.button>
+          </Link>
+        </div>
 
-        {/* BURGER BUTTON (Mobile only) */}
-        <button 
-          onClick={toggleMenu}
-          className="md:hidden z-50 p-1.5 bg-[#f1e4c3] border-2 border-black rounded-lg text-black shadow-[2px_2px_0_0_#000]"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        {/* MOBILE BURGER - Absolute à droite en mobile */}
+        <div className="md:hidden absolute right-4 flex items-center z-50">
+          <button 
+            onClick={toggleMenu}
+            className="text-stone-700 p-1"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
+
+      {/* MOBILE MENU (Pause Menu Style) */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center md:hidden z-40 p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="bg-[#f1e4c3] border-[4px] border-[#b89a67] p-8 rounded-[24px] w-full max-w-xs flex flex-col gap-4 shadow-[0_10px_0_0_#b89a67]"
+            >
+              <p className="text-[#b89a67] text-[10px] font-black text-center border-b border-[#b89a67] pb-2 mb-2 tracking-widest uppercase">Navigation</p>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="text-lg font-black uppercase text-stone-800 hover:text-green-800 flex items-center gap-3 transition-colors"
+                >
+                  <ChevronRight size={18} className="text-green-700" />
+                  {link.name}
+                </Link>
+              ))}
+              <Link to="/" onClick={() => setIsOpen(false)} className="mt-4">
+                 <button className="w-full bg-[#4a5a42] text-white font-black py-3 rounded-xl uppercase text-xs tracking-widest">
+                    Exit Game
+                 </button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
