@@ -7,11 +7,16 @@ import Footer from './components/Footer';
 import Years from './pages/Years';
 import Months from './pages/Months';
 import Days from './pages/Days';
-import SignIn from './pages/SignIn'
+import SignIn from './pages/SignIn';
+// import ThyroterraDashboard from './components/ThyroterraDashboard';
+import CheckList from './components/CheckList';
+import MonthlyProgress from './components/MonthlyProgress';
+import FAQSystem from './pages/FAQSystem';
+
 
 function App() {
   return (
-    <div className='bg-[#5A7554]'>
+    <div className='bg-[#5A7554] font-pixel'>
       <Routes>
         <Route 
           path="/" 
@@ -30,6 +35,13 @@ function App() {
         <Route path="/months" element={<Months />} />
         <Route path="/days" element={<Days />} />
         <Route path="/signin" element={<SignIn />} />
+        
+       
+        {/* <Route path="/thyroterra" element={<ThyroterraDashboard.jsx />} /> */}
+        <Route path="/FAQ" element={<FAQSystem />} />
+        <Route path="/monthly-progress" element={<MonthlyProgress />} />
+        <Route path="/checklist" element={<CheckList />} />
+      
       </Routes>
     </div>
   );

@@ -7,6 +7,7 @@ const Navbar2 = () => {
     { name: 'Forest', href: '/years' },
     { name: 'Land', href: '/months' },
     { name: 'Progres', href: '/days' },
+    { name: 'FAQ', href: '/FAQ' },
   ];
 
   return (

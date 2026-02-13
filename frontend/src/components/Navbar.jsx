@@ -6,6 +6,7 @@ const Navbar = () => {
     { name: 'Home', href: 'hero' }, 
     { name: 'About', href: 'about' },
     { name: 'Story', href: 'story' },
+    { name: 'FAQ', href: '/FAQ' },
   ];
 
   const handleScroll = (id) => {
