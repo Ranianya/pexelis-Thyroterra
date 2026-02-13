@@ -43,10 +43,9 @@ const About = () => {
           <img src="/cloud.png" alt="Cloud" className='absolute right-10 h-12 md:h-16' />
         </div>
 
-        <div className='flex justify-end pr-0 h-15'>
-          <img src="/FloatingLeft.png" alt="" />
-          <img src="/Top.png" alt="Forest" />  
-        </div>
+       <div className='flex justify-start h-15 w-full'>
+         <img src="/homeleft.png" alt="" className='h-50 ml-0' />
+       </div>
         
         <div className='mt-5 flex justify-center pb-10'>
           {/* Utilisation de Link pour la navigation */}
