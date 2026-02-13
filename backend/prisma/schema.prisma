@@ -59,11 +59,18 @@ model Spot {
 }
 
 model UserProgress {
-  id        Int    @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   userId    Int
-  user      User    @relation(fields: [userId], references: [id])
-  status    ProgressStatus
-  createdAt DateTime @default(now())
+  spotId    Int
+  habitId   Int
+  dayNumber Int
+  status    ProgressStatus @default(completed)
+  
+  user  User  @relation(fields: [userId], references: [id])
+  spot  Spot  @relation(fields: [spotId], references: [id])
+  habit Habit @relation(fields: [habitId], references: [id])
+
+  @@unique([userId, habitId, spotId, dayNumber])
 }
 
 model MonthlyProgressDisplay {
@@ -74,4 +81,20 @@ model MonthlyProgressDisplay {
   createdAt DateTime @default(now())
 }
 
-// ...existing code for other models...
+CREATE TABLE habit_categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) -- 'Thyroid Treatment' or 'Wellness Forest'
+);
+
+CREATE TABLE habit (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category_id INT,
+    task_name VARCHAR(255), -- e.g., 'Take Levothyroxine'
+    FOREIGN KEY (category_id) REFERENCES habit_categories(id)
+);
+CREATE TABLE faq (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    question TEXT NOT NULL, -- e.g., 'Which gland is affected?'
+    answer TEXT NOT NULL
+);
+
