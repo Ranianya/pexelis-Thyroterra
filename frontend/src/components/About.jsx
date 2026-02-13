@@ -1,14 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
+import { motion } from 'framer-motion'; // On importe motion
 
 const About = () => {
   return ( 
-    <section id='hero' className='mt-14 w-full relative'>
+    <section id='hero' className='mt-14 w-full relative overflow-hidden'> {/* overflow-hidden pour éviter le scroll horizontal */}
       <div className='flex flex-col items-center justify-center font-pixel px-0 '>
         <div className='w-full max-w'>
           
+          {/* NUAGE 1 : Flotte de gauche à droite */}
           <div className='w-full relative h-15 pt-30'>
-            <img src="/cloud.png" alt="Cloud" className='absolute left-10 h-12 md:h-16' />
+            <motion.img 
+              src="/cloud.png" 
+              alt="Cloud" 
+              className='absolute left-10 h-12 md:h-16'
+              animate={{ 
+                x: [0, 50, 0], // Se déplace de 50px vers la droite
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
           </div>
 
           <div className='flex justify-end'>
@@ -39,24 +53,62 @@ const About = () => {
           <p>"Your journey isn't just a calendar; it's a masterpiece in progress."</p>
         </div>
 
+        {/* NUAGE 2 : Flotte de droite à gauche (effet miroir) */}
         <div className='w-full relative h-15 pt-30'>
-          <img src="/cloud.png" alt="Cloud" className='absolute right-10 h-12 md:h-16' />
+          <motion.img 
+            src="/cloud.png" 
+            alt="Cloud" 
+            className='absolute right-10 h-12 md:h-16' 
+            animate={{ 
+              x: [0, -40, 0], // Se déplace vers la gauche
+              y: [0, 10, 0]   // Petit mouvement vertical en plus
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
         </div>
 
-       <div className='flex justify-start h-15 w-full'>
-         <img src="/homeleft.png" alt="" className='h-50 ml-0' />
-       </div>
-        
-        <div className='mt-5 flex justify-center pb-10'>
-          {/* Utilisation de Link pour la navigation */}
-          <Link to="/signin">
-            <button className='mt-10 bg-[#bcc7ba] text-[#0a2310] font-pixel px-10 py-2 
-                               rounded-full border-[12px] border-[#607456] 
-                               hover:scale-105 transition-transform duration-200 '>
-              Get Start
-            </button>
-          </Link>
+        <div className='flex justify-start h-15 w-full'>
+          <img src="/homeleft.png" alt="" className='h-50 ml-0' />
         </div>
+        
+       <div className='mt-5 flex justify-center pb-10'>
+  <Link to="/signin">
+    <motion.button 
+      // Animation constante : le bouton "respire" (pulse)
+      animate={{ 
+        scale: [1, 1.05, 1],
+      }}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+      // Interaction survol : il s'agrandit légèrement
+      whileHover={{ 
+        scale: 1.1,
+        filter: "brightness(1.1)",
+      }}
+      // Interaction clic : il s'écrase (style bouton arcade)
+      whileTap={{ 
+        scale: 0.9,
+        y: 5 // Effet d'enfoncement
+      }}
+      className='mt-10 bg-[#bcc7ba] text-[#0a2310] font-pixel px-10 py-2 
+                 rounded-full border-[12px] border-[#607456] 
+                 shadow-[0_8px_0_0_#4a5a42] active:shadow-none
+                 transition-all duration-100 relative'
+    >
+      <span className='drop-shadow-md'>Get Started</span>
+      
+      {/* Petit reflet brillant style jeu rétro */}
+      <div className='absolute top-1 left-4 w-2/3 h-1 bg-white/30 rounded-full' />
+    </motion.button>
+  </Link>
+</div>
       </div>
     </section>
   );

@@ -215,9 +215,9 @@ const FAQSystem = () => {
       {/* --- HEADER RESPONSIVE --- */}
       <header className="w-full max-w-6xl flex justify-between items-center p-4 z-50">
         {/* Logo */}
-        <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
+        <div className="w-20 h-20 sm:w-20 sm:h-20 flex-shrink-0">
           <img 
-            src="./logo.png" 
+            src="/logo.png" 
             alt="logo" 
             className="w-full h-full object-contain cursor-pointer active:scale-95 transition-transform" 
             onClick={() => navigate('/home')}
