@@ -6,11 +6,20 @@ generator client {
 datasource db {
   provider = "mysql"
   
-}
+} 
+
+//////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////
+
 enum ProgressStatus {
   completed
   missed
 }
+
+//////////////////////////////////////////////////
+// MODELS
+//////////////////////////////////////////////////
 
 model User {
   id             Int      @id @default(autoincrement())
@@ -20,16 +29,26 @@ model User {
   password       String
   currentLandId  Int?
   currentSpotId  Int?
+
   currentLand    Land?    @relation("CurrentLand", fields: [currentLandId], references: [id])
   currentSpot    Spot?    @relation("CurrentSpot", fields: [currentSpotId], references: [id])
+
   progress       UserProgress[]
   monthlyDisplay MonthlyProgressDisplay[]
-  createdAt      DateTime @default(now())
+
+  // All habits the user has checked or added
+  habits         UserHabit[]
+
+  // Private habits created by the user
+  privateHabits  Habit[] @relation("UserPrivateHabits")
+
+  createdAt DateTime @default(now())
 }
 
 model Land {
   id         Int     @id @default(autoincrement())
   isUnlocked Boolean @default(false)
+
   spots Spot[]
   users User[] @relation("CurrentLand")
 }
@@ -37,24 +56,41 @@ model Land {
 model Spot {
   id         Int     @id @default(autoincrement())
   landId     Int
-  monthName  Int
+  monthName  Int     // 1-12
   isUnlocked Boolean @default(false)
+
   land Land @relation(fields: [landId], references: [id])
   currentSpotUsers User[] @relation("CurrentSpot")
-  userProgresses UserProgress[]
+
+  userProgress UserProgress[]
+  days         Day[]
+}
+
+model Day {
+  id        Int    @id @default(autoincrement())
+  spotId    Int
+  dayNumber Int    // 1-31
+
+  spot      Spot @relation(fields: [spotId], references: [id])
+  progress  UserProgress[]
+
+  @@unique([spotId, dayNumber])
 }
 
 model UserProgress {
-  id        Int            @id @default(autoincrement())
-  userId    Int
-  spotId    Int
-  habitId   Int
-  dayNumber Int
-  status    ProgressStatus @default(missed)
+  id      Int            @id @default(autoincrement())
+  userId  Int
+  spotId  Int
+  habitId Int
+  dayId   Int
+  status  ProgressStatus @default(missed)
+
   user  User  @relation(fields: [userId], references: [id])
   spot  Spot  @relation(fields: [spotId], references: [id])
   habit Habit @relation(fields: [habitId], references: [id])
-  @@unique([userId, habitId, spotId, dayNumber])
+  day   Day   @relation(fields: [dayId], references: [id])
+
+  @@unique([userId, habitId, dayId])
 }
 
 model MonthlyProgressDisplay {
@@ -62,26 +98,56 @@ model MonthlyProgressDisplay {
   userId    Int
   month     Int
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
 }
+
+//////////////////////////////////////////////////
+// HABITS
+//////////////////////////////////////////////////
 
 model HabitCategory {
   id           Int     @id @default(autoincrement())
-  categoryName String  @db.VarChar(50)
+  categoryName String
+
   habits Habit[]
 }
 
 model Habit {
-  id         Int     @id @default(autoincrement())
-  taskName   String  @db.VarChar(255)
-  check      Boolean @default(false)
+  id         Int    @id @default(autoincrement())
   categoryId Int
-  category   HabitCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  userProgresses UserProgress[]
+  taskName   String
+  userId     Int?   // null = global, number = private
+
+  category HabitCategory @relation(fields: [categoryId], references: [id])
+
+  // Private habits relation to user
+  user User? @relation("UserPrivateHabits", fields: [userId], references: [id], map: "FK_Habit_User")
+
+  progress   UserProgress[]
+  userHabits UserHabit[]
 }
+
+model UserHabit {
+  id      Int @id @default(autoincrement())
+
+  userId  Int
+  habitId Int
+
+  isChecked Boolean @default(false)
+
+  user  User  @relation(fields: [userId], references: [id])
+  habit Habit @relation(fields: [habitId], references: [id])
+
+  @@unique([userId, habitId])
+}
+
+//////////////////////////////////////////////////
+// FAQ
+//////////////////////////////////////////////////
 
 model Faq {
   id       Int    @id @default(autoincrement())
-  question String @db.Text
-  answer   String @db.Text
+  question String
+  answer   String
 }

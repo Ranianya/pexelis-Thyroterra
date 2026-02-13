@@ -1,11 +1,11 @@
 import express from "express";
-import { getAllLands, getLandSpots, updateUserSpot } from "../controllers/landController.js";
+import { getAllLands, getLandSpots, updateUserPosition } from "../controllers/landController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 router.get("/", getAllLands);
 router.get("/:id/spots", getLandSpots);
-router.put("/update-position", protect, updateUserSpot);
+router.put("/spot", protect, updateUserPosition); // PUT /api/lands/spot
 
 export default router;

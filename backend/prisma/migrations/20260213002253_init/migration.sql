@@ -32,15 +32,25 @@ CREATE TABLE `Spot` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `Day` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `spotId` INTEGER NOT NULL,
+    `dayNumber` INTEGER NOT NULL,
+
+    UNIQUE INDEX `Day_spotId_dayNumber_key`(`spotId`, `dayNumber`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `UserProgress` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NOT NULL,
     `spotId` INTEGER NOT NULL,
     `habitId` INTEGER NOT NULL,
-    `dayNumber` INTEGER NOT NULL,
+    `dayId` INTEGER NOT NULL,
     `status` ENUM('completed', 'missed') NOT NULL DEFAULT 'missed',
 
-    UNIQUE INDEX `UserProgress_userId_habitId_spotId_dayNumber_key`(`userId`, `habitId`, `spotId`, `dayNumber`),
+    UNIQUE INDEX `UserProgress_userId_habitId_dayId_key`(`userId`, `habitId`, `dayId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -57,7 +67,7 @@ CREATE TABLE `MonthlyProgressDisplay` (
 -- CreateTable
 CREATE TABLE `HabitCategory` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `categoryName` VARCHAR(50) NOT NULL,
+    `categoryName` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -65,18 +75,29 @@ CREATE TABLE `HabitCategory` (
 -- CreateTable
 CREATE TABLE `Habit` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `taskName` VARCHAR(255) NOT NULL,
-    `check` BOOLEAN NOT NULL DEFAULT false,
     `categoryId` INTEGER NOT NULL,
+    `taskName` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NULL,
 
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UserHabit` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `userId` INTEGER NOT NULL,
+    `habitId` INTEGER NOT NULL,
+    `isChecked` BOOLEAN NOT NULL DEFAULT false,
+
+    UNIQUE INDEX `UserHabit_userId_habitId_key`(`userId`, `habitId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Faq` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `question` TEXT NOT NULL,
-    `answer` TEXT NOT NULL,
+    `question` VARCHAR(191) NOT NULL,
+    `answer` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -91,6 +112,9 @@ ALTER TABLE `User` ADD CONSTRAINT `User_currentSpotId_fkey` FOREIGN KEY (`curren
 ALTER TABLE `Spot` ADD CONSTRAINT `Spot_landId_fkey` FOREIGN KEY (`landId`) REFERENCES `Land`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Day` ADD CONSTRAINT `Day_spotId_fkey` FOREIGN KEY (`spotId`) REFERENCES `Spot`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `UserProgress` ADD CONSTRAINT `UserProgress_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -100,7 +124,19 @@ ALTER TABLE `UserProgress` ADD CONSTRAINT `UserProgress_spotId_fkey` FOREIGN KEY
 ALTER TABLE `UserProgress` ADD CONSTRAINT `UserProgress_habitId_fkey` FOREIGN KEY (`habitId`) REFERENCES `Habit`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `UserProgress` ADD CONSTRAINT `UserProgress_dayId_fkey` FOREIGN KEY (`dayId`) REFERENCES `Day`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `MonthlyProgressDisplay` ADD CONSTRAINT `MonthlyProgressDisplay_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Habit` ADD CONSTRAINT `Habit_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `HabitCategory`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Habit` ADD CONSTRAINT `Habit_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `HabitCategory`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Habit` ADD CONSTRAINT `FK_Habit_User` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UserHabit` ADD CONSTRAINT `UserHabit_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UserHabit` ADD CONSTRAINT `UserHabit_habitId_fkey` FOREIGN KEY (`habitId`) REFERENCES `Habit`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

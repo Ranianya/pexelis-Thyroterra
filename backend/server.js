@@ -5,6 +5,10 @@ import gameRoutes from "./routes/gameRoutes.js";
 import landRoutes from "./routes/landRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 dotenv.config();
+console.log("--- DEBUG ENV ---");
+console.log("PORT:", process.env.PORT);
+console.log("JWT:", process.env.JWT_SECRET);
+console.log("-----------------");
 
 const app = express();
 app.use(express.json());
@@ -15,6 +19,7 @@ const PORT = process.env.PORT || 5000;
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/game", gameRoutes);
+console.log("Loading Lands Routes...");
 app.use("/api/lands", landRoutes);
 app.use("/api/users", userRoutes);
 // Test route
