@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Check, Plus, Trash2 } from 'lucide-react';
+import { RotateCcw, Check, Plus, Trash2, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
-
 const CheckList = ({ onAddToRoutine }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // État pour la navbar mobile
 
-  // Chargement initial depuis le LocalStorage ou données par défaut
+  // --- TA LOGIQUE DE BASE (INCHANGÉE) ---
   const [coreRitual, setCoreRitual] = useState(() => {
     const saved = localStorage.getItem('thyro-core-list');
     return saved ? JSON.parse(saved) : [
@@ -32,7 +32,6 @@ const CheckList = ({ onAddToRoutine }) => {
   const [isAdding, setIsAdding] = useState(null);
   const [inputValue, setInputValue] = useState('');
 
-  // Sauvegarde automatique dans le LocalStorage à chaque changement
   useEffect(() => {
     localStorage.setItem('thyro-core-list', JSON.stringify(coreRitual));
   }, [coreRitual]);
@@ -56,12 +55,10 @@ const CheckList = ({ onAddToRoutine }) => {
       text: inputValue,
       icon: list === 'wellness' ? '⭐' : null,
       checked: true,
-      isDefault: false // Marqué comme personnalisé pour permettre la suppression
+      isDefault: false 
     };
-
     if (list === 'core') setCoreRitual([...coreRitual, newTask]);
     else setWellnessForest([...wellnessForest, newTask]);
-
     setInputValue('');
     setIsAdding(null);
   };
@@ -72,65 +69,69 @@ const CheckList = ({ onAddToRoutine }) => {
   };
 
   const handleFinalSubmit = () => {
-    const selectedTasks = [
-      ...coreRitual.filter(t => t.checked),
-      ...wellnessForest.filter(t => t.checked)
-    ].map(t => ({
-      id: t.id,
-      title: t.text.split(':')[0].toUpperCase(),
-      desc: t.text.split(':')[1] || t.text,
-      icon: t.icon || 'pill',
-      completed: false,
-      action: 'I DID IT'
-    }));
 
-    // On sauvegarde les tâches pour le Dashboard
-    localStorage.setItem('thyroterra-tasks', JSON.stringify(selectedTasks));
-    
-    if (onAddToRoutine) {
-      onAddToRoutine(selectedTasks);
-    } else {
-      alert("Routine updated! Go back to Dashboard.");
-    }
+    if (onAddToRoutine) onAddToRoutine(selectedTasks);
+    navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-pixel p-4 flex flex-col items-center relative overflow-hidden">
+    <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-pixel p-4 flex flex-col items-center relative overflow-x-hidden">
 
-      {/* Header */}
-        <div className="w-full max-w-2xl flex justify-between items-center mb-6 relative">
-
-            {/* Logo */}
-            <div className="w-16 h-16">
-                <img
-                src="./logo.png"
-                alt="Logo"
-                className="w-full h-full object-contain"
-                />
-            </div>
-
-            {/* Reset Button */}
-            <button
-                onClick={() => { 
-                localStorage.clear(); 
-                window.location.reload(); 
-                }}
-                className="bg-black p-2 rounded-lg text-white hover:scale-110 transition-transform"
-            >
-                <RotateCcw size={24} />
-            </button>
-
+      {/* --- NOUVELLE NAVBAR --- */}
+      <header className="w-full max-w-6xl flex items-center justify-between mb-8 gap-4 z-50">
+        {/* Logo */}
+        <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 cursor-pointer" onClick={() => navigate('/')}>
+          <img src="./logo.png" alt="logo" className="w-full h-full object-contain" />
         </div>
 
-      {/* Title */}
-      <div className="w-full max-w-2xl bg-white border-4 border-[#D4AF37] rounded-xl p-3 my-6 text-center shadow-[0_6px_0_0_#B8860B] z-10">
-        <h1 className="text-sm md:text-lg font-black text-stone-800 uppercase flex items-center justify-center gap-2">
+        {/* Navbar Capsule */}
+        <nav className="flex-grow max-w-xl relative">
+          <div className="bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-[40px] px-6 py-2 flex justify-between items-center shadow-[4px_4px_0_0_#b89a67] relative z-50">
+            <div className="hidden md:flex justify-around w-full">
+              {["HOME", "FOREST", "LAND", "PROGRES","TODAY" ,"MONTH","TASKS"].map((item) => (
+                <button key={item} className="text-[11px] font-black text-black hover:scale-110 transition-transform uppercase px-2">
+                  {item}
+                </button>
+              ))}
+            </div>
+            <div className="md:hidden flex justify-center w-full">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black font-black text-[10px] flex items-center gap-2">
+                {isMenuOpen ? <X size={18} /> : <Menu size={18} />} 
+              </button>
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full left-0 right-0 mt-2 bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-2xl p-4 shadow-[4px_4px_0_0_#b89a67] z-40 md:hidden flex flex-col gap-3 items-center">
+                {["HOME", "FOREST", "LAND", "PROGRES","TODAY" ,"MONTH","TASKS"].map((item) => (
+                  <button key={item} onClick={() => setIsMenuOpen(false)} className="font-black text-black text-xs uppercase">{item}</button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
+
+        {/* Reset Button (Ancien bouton back remplacé par reset unifié) */}
+        <div className="flex-shrink-0">
+          <button
+            onClick={() => { localStorage.clear(); window.location.reload(); }}
+            className="bg-black p-2.5 rounded-lg text-white hover:scale-110 transition-transform shadow-[3px_3px_0_0_#5A7554]"
+          >
+            <RotateCcw size={20} />
+          </button>
+        </div>
+      </header>
+
+      {/* --- LE RESTE DU CONTENU (INCHANGÉ) --- */}
+      <div className="w-full max-w-2xl bg-white border-4 border-[#D4AF37] rounded-xl p-3 mb-8 text-center shadow-[0_6px_0_0_#B8860B] z-10">
+        <h1 className="text-sm md:text-lg font-black text-stone-800 uppercase">
            Select what you want to add to your health routine
         </h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mb-24 z-10">
-        
         {/* Core Ritual Section */}
         <div className="flex flex-col items-center gap-4">
           <div className="bg-[#f1e4c3] border-4 border-[#D4AF37] rounded-xl p-5 w-full shadow-lg min-h-[380px]">
@@ -187,12 +188,12 @@ const CheckList = ({ onAddToRoutine }) => {
         </div>
       </div>
 
-      {/* Add Modal (Simple overlay pour l'ajout) */}
+      {/* Modale d'ajout */}
       <AnimatePresence>
         {isAdding && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
             <div className="bg-[#f1e4c3] border-4 border-stone-800 p-6 rounded-xl w-full max-w-sm">
-              <h3 className="font-black mb-4">NEW TASK</h3>
+              <h3 className="font-black mb-4 uppercase">New Task</h3>
               <input autoFocus className="w-full p-2 border-2 border-stone-800 rounded mb-4 shadow-[2px_2px_0_0_#000]" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Type task..." />
               <div className="flex gap-2">
                 <button onClick={() => setIsAdding(null)} className="flex-1 py-2 font-bold border-2 border-stone-800 rounded">CANCEL</button>
@@ -203,21 +204,17 @@ const CheckList = ({ onAddToRoutine }) => {
         )}
       </AnimatePresence>
 
-      {/* Button: ADD TO ROUTINE */}
+      {/* Button: Final Submission */}
       <div className="fixed bottom-8 right-8 z-50">
         <button 
-          onClick={() => navigate("/thyroterra")}
+          onClick={handleFinalSubmit}
           className="bg-[#f1e4c3] border-4 border-[#5A7554] px-6 py-3 rounded-xl font-black text-stone-800 shadow-[0_6px_0_0_#5A7554] hover:translate-y-1 hover:shadow-[0_2px_0_0_#5A7554] transition-all flex items-center gap-2"
         >
-            
           <Plus size={20} /> ADD TO THE ROUTINE
         </button>
       </div>
 
-      {/* Ground Background */}
-     
-
-      <div className="absolute bottom-12 left-10 z-20 w-20 h-20">
+      <div className="absolute bottom-12 left-10 z-20 w-20 h-20 pointer-events-none">
         <img src="/mario.png" alt="character" className="w-full h-full object-contain" />
       </div>
     </div>

@@ -10,7 +10,7 @@ function App() {
     <Router>
       <Routes className="font-pixel">
         <Route path="/" element={<ThyroterraDashboard />} />
-        <Route path="/thyroterra" element={<ThyroterraDashboard />} />
+        <Route path="/dashboard" element={<ThyroterraDashboard />} />
         <Route path="/FAQ" element={<FAQSystem />} />
         <Route path="/monthly-progress" element={<MonthlyProgress />} />
         <Route path="/checklist" element={<CheckList />} />

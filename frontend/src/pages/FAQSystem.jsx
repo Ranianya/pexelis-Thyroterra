@@ -225,10 +225,10 @@ const FAQSystem = () => {
         </div>
 
         {/* NAVIGATION DESKTOP (Visible uniquement sur large écran) */}
-        <nav className="hidden md:flex items-center gap-8 bg-white/40 backdrop-blur-md px-8 py-3 rounded-2xl border-2 border-stone-800 shadow-[4px_4px_0_0_#1c1c1c]">
+        <nav className="hidden md:flex items-center gap-8 bg-[#f1e4c3] backdrop-blur-md px-8 py-3 rounded-2xl border-2 border-[#b89a67] shadow-[0_8px_0_0_#b89a67]">
           <button onClick={() => navigate('/home')} className="text-xs font-black hover:text-[#5A7554] transition-colors uppercase tracking-widest">Home</button>
           <button onClick={() => navigate('/story')} className="text-xs font-black hover:text-[#5A7554] transition-colors uppercase tracking-widest">Story</button>
-          <button onClick={handleBack} className="text-xs font-black text-[#5A7554] border-b-2 border-[#5A7554] uppercase tracking-widest">FAQ</button>
+          <button onClick={handleBack} className="text-xs font-black text-[#A37803] border-b-2 border-[#A37803] uppercase tracking-widest">FAQ</button>
         </nav>
 
         {/* NAVIGATION MOBILE (Visible uniquement à droite sur mobile) */}
@@ -236,7 +236,7 @@ const FAQSystem = () => {
             {/* Bouton Reset (Toujours visible) */}
             <button
                 onClick={() => { localStorage.clear(); window.location.reload(); }}
-                className="bg-black p-2 rounded-lg text-white active:scale-90 transition-transform"
+                className=" bg-black p-2 rounded-lg text-white active:scale-90 transition-transform"
             >
                 <RotateCcw size={18} />
             </button>
@@ -244,7 +244,7 @@ const FAQSystem = () => {
             {/* Bouton Menu Mobile */}
             <button 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="bg-[#f1e4c3] border-2 border-stone-800 p-2 rounded-lg shadow-[2px_2px_0_0_#000] active:translate-y-0.5 transition-all"
+                className="bg-[#f1e4c3] border-2 border-[#b89a67] p-2 rounded-lg shadow-[0_8px_0_0_#b89a67] active:translate-y-0.5 transition-all"
             >
                 {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -257,7 +257,7 @@ const FAQSystem = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-20 right-4 w-48 bg-[#f1e4c3] border-4 border-stone-800 rounded-xl shadow-[4px_4px_0_0_#000] p-2 flex flex-col gap-1 md:hidden overflow-hidden"
+              className="absolute top-20 right-4 w-48 bg-[#f1e4c3] border-4 border-[#b89a67] rounded-xl shadow-[0_8px_0_0_#b89a67] p-2 flex flex-col gap-1 md:hidden overflow-hidden"
             >
               <button onClick={() => navigate('/home')} className="flex items-center gap-3 p-3 hover:bg-[#8b8e4b]/20 rounded-lg font-black text-xs uppercase tracking-tighter">
                 <Home size={16} /> Home
@@ -265,7 +265,7 @@ const FAQSystem = () => {
               <button onClick={() => navigate('/story')} className="flex items-center gap-3 p-3 hover:bg-[#8b8e4b]/20 rounded-lg font-black text-xs uppercase tracking-tighter">
                 <BookOpen size={16} /> Story
               </button>
-              <button onClick={handleBack} className="flex items-center gap-3 p-3 bg-[#8b8e4b] text-white rounded-lg font-black text-xs uppercase tracking-tighter shadow-[2px_2px_0_0_#000]">
+              <button onClick={handleBack} className="flex items-center gap-3 p-3  text-[#A37803] rounded-lg font-black text-xs uppercase tracking-tighter ">
                 <MessageCircleQuestion size={16} /> FAQ
               </button>
             </motion.div>
@@ -332,7 +332,7 @@ const FAQSystem = () => {
             <motion.div key="reply" className="w-full max-w-md sm:max-w-lg flex flex-col gap-3 px-2">
                 <div className="self-start bg-[#f1e4c3] border-2 border-stone-800 rounded-2xl px-4 py-2 shadow-sm max-w-[90%] font-bold text-xs italic text-stone-800">hey! ask anything about hypothyroidism?</div>
                 <div className="self-end bg-[#8b8e4b] border-2 border-stone-800 rounded-2xl px-4 py-2 shadow-sm max-w-[90%] font-black text-xs text-white uppercase">{userQuestion}</div>
-                <div className="self-start bg-[#f1e4c3] border-2 border-stone-800 rounded-2xl px-4 py-2 shadow-sm animate-pulse border-dashed font-black text-xs text-stone-800 tracking-tighter">Analyzing...</div>
+                <div className="self-start bg-[#f1e4c3] border-2 border-stone-800 rounded-2xl px-4 py-2  font-black text-xs text-stone-800 tracking-tighter">Analyzing...</div>
             </motion.div>
           )}
         </AnimatePresence>
