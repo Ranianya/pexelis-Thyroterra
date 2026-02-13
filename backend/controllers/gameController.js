@@ -1,4 +1,4 @@
-
+ 
 import prisma from "../config/prisma.js";
 
 // --------------------------
@@ -77,7 +77,6 @@ export const getCurrentJourney = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
 
 
 

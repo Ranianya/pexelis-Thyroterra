@@ -1,49 +1,21 @@
 import prisma from "../config/prisma.js";
 
-
-/**
- * CHECK habit
- */
 export const checkHabit = async (req, res) => {
   try {
     const userId = parseInt(req.body.userId);
     const habitId = parseInt(req.params.habitId);
 
-    const exist = await prisma.userHabit.findUnique({
-      where: {
-        userId_habitId: {
-          userId,
-          habitId
-        }
-      }
+    await prisma.userHabit.upsert({
+      where: { userId_habitId: { userId, habitId } },
+      update: { isChecked: true },
+      create: { userId, habitId, isChecked: true }
     });
-
-    if (exist) {
-      await prisma.userHabit.update({
-        where: { id: exist.id },
-        data: { isChecked: true }
-      });
-    } else {
-      await prisma.userHabit.create({
-        data: {
-          userId,
-          habitId,
-          isChecked: true
-        }
-      });
-    }
-
     res.json({ message: "Habit checked" });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
-/**
- * UNCHECK habit
- */
 export const uncheckHabit = async (req, res) => {
   try {
     const userId = parseInt(req.body.userId);
@@ -53,53 +25,38 @@ export const uncheckHabit = async (req, res) => {
       where: { userId, habitId },
       data: { isChecked: false }
     });
-
     res.json({ message: "Habit unchecked" });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
-/**
- * ADD TO ROUTINE → Create UserProgress
- */
 export const addToRoutine = async (req, res) => {
   try {
     const { userId, spotId, dayId } = req.body;
 
     const habits = await prisma.userHabit.findMany({
-      where: {
-        userId,
-        isChecked: true
-      }
+      where: { userId: parseInt(userId), isChecked: true }
     });
 
-    for (const h of habits) {
-
-      await prisma.userProgress.upsert({
-        where: {
-          userId_habitId_dayId: {
-            userId,
-            habitId: h.habitId,
-            dayId
-          }
-        },
-        update: {},
-        create: {
-          userId,
-          habitId: h.habitId,
-          spotId,
-          dayId,
-          status: "missed"
-        }
-      });
-
+    if (habits.length === 0) {
+      return res.status(400).json({ error: "No habits selected in DB" });
     }
 
+    for (const h of habits) {
+      await prisma.userProgress.upsert({
+        where: { userId_habitId_dayId: { userId: parseInt(userId), habitId: h.habitId, dayId: parseInt(dayId) } },
+        update: {},
+        create: { 
+          userId: parseInt(userId), 
+          habitId: h.habitId, 
+          spotId: parseInt(spotId), 
+          dayId: parseInt(dayId), 
+          status: "missed" 
+        }
+      });
+    }
     res.json({ message: "Routine created" });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

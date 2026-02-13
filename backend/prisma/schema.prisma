@@ -10,6 +10,7 @@ datasource db {
 //////////////////////////////////////////////////
 // ENUMS
 //////////////////////////////////////////////////
+
 enum ProgressStatus {
   completed
   missed
@@ -39,21 +40,24 @@ model User {
   unlockedLands  UserLand[]
   unlockedSpots  UserSpot[]
 
+  userDays       UserDay[]   // ✅ correct relation
+
   createdAt DateTime @default(now())
 }
 
 model Land {
-  id         Int     @id @default(autoincrement())
-  name       String
-  spots      Spot[]
-  users      User[] @relation("CurrentLand")
+  id          Int     @id @default(autoincrement())
+  name        String
+  spots       Spot[]
+  users       User[]  @relation("CurrentLand")
   userUnlocks UserLand[]
 }
 
 model Spot {
   id         Int     @id @default(autoincrement())
   landId     Int
-  monthName  Int     // 1-12
+  monthName  Int
+
   land       Land @relation(fields: [landId], references: [id])
 
   userProgress UserProgress[]
@@ -66,12 +70,36 @@ model Spot {
 model Day {
   id        Int    @id @default(autoincrement())
   spotId    Int
-  dayNumber Int    // 1-31
+  dayNumber Int
+
   spot      Spot @relation(fields: [spotId], references: [id])
   progress  UserProgress[]
 
+  userDays  UserDay[]   // ✅ opposite relation added here
+
   @@unique([spotId, dayNumber])
 }
+
+//////////////////////////////////////////////////
+// USER DAY (Unlock & Completion Logic)
+//////////////////////////////////////////////////
+
+model UserDay {
+  id        Int @id @default(autoincrement())
+  userId    Int
+  dayId     Int
+  unlocked  Boolean @default(false)
+  completed Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+  day  Day  @relation(fields: [dayId], references: [id])
+
+  @@unique([userId, dayId])
+}
+
+//////////////////////////////////////////////////
+// USER PROGRESS
+//////////////////////////////////////////////////
 
 model UserProgress {
   id      Int            @id @default(autoincrement())
@@ -90,12 +118,13 @@ model UserProgress {
 }
 
 model MonthlyProgressDisplay {
-  id                 Int      @id @default(autoincrement())
+  id                 Int @id @default(autoincrement())
   userId             Int
   spotId             Int
-  progressPercentage Int      @default(0)
-  user               User     @relation(fields: [userId], references: [id])
-  spot               Spot     @relation(fields: [spotId], references: [id])
+  progressPercentage Int @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+  spot Spot @relation(fields: [spotId], references: [id])
 
   @@unique([userId, spotId])
 }
@@ -105,28 +134,28 @@ model MonthlyProgressDisplay {
 //////////////////////////////////////////////////
 
 model HabitCategory {
-  id           Int     @id @default(autoincrement())
+  id           Int @id @default(autoincrement())
   categoryName String
-  habits Habit[]
+  habits       Habit[]
 }
 
 model Habit {
-  id         Int    @id @default(autoincrement())
+  id         Int @id @default(autoincrement())
   categoryId Int
   taskName   String
-  userId     Int?   // null = global, number = private
+  userId     Int?
 
   category HabitCategory @relation(fields: [categoryId], references: [id])
-  user     User? @relation("UserPrivateHabits", fields: [userId], references: [id], map: "FK_Habit_User")
+  user     User? @relation("UserPrivateHabits", fields: [userId], references: [id])
 
   progress   UserProgress[]
   userHabits UserHabit[]
 }
 
 model UserHabit {
-  id      Int @id @default(autoincrement())
-  userId  Int
-  habitId Int
+  id        Int @id @default(autoincrement())
+  userId    Int
+  habitId   Int
   isChecked Boolean @default(false)
 
   user  User  @relation(fields: [userId], references: [id])
@@ -168,7 +197,7 @@ model UserSpot {
 //////////////////////////////////////////////////
 
 model Faq {
-  id       Int    @id @default(autoincrement())
+  id       Int @id @default(autoincrement())
   question String
   answer   String
 }

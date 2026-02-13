@@ -13,6 +13,7 @@ import ThyroterraDashboard from './components/ThyroterraDashboard.';
 import MonthlyProgress from './components/MonthlyProgress';
 import CheckList from './components/CheckList';
 import FAQSystem from './pages/FAQSystem';
+// ✅ Ensure the route includes the :spotId parameter
 
 function App() {
   return (
@@ -30,11 +31,15 @@ function App() {
             </>
           } 
         />
-        
+        // In your Routes definition
+
+
+
         <Route path="/years" element={<Years />} />
         <Route path="/months" element={<Months />} />
         <Route path="/days" element={<Days />} />
-        
+        <Route path="/days/:spotId" element={<Days />} />
+        <Route path="/checklist" element={<CheckList />} />
         {/* Auth Routes */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
