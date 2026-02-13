@@ -38,6 +38,7 @@ import ThyroterraDashboard from './components/ThyroterraDashboard.';
 import MonthlyProgress from './components/MonthlyProgress';
 import CheckList from './components/CheckList';
 import FAQSystem from './pages/FAQSystem';
+import SignUp from './pages/SignUp'
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
         <Route path="/months" element={<Months />} />
         <Route path="/days" element={<Days />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard/:dayId" element={<ThyroterraDashboard />} />
         <Route path="/dashboard" element={<ThyroterraDashboard />} />
         <Route path="/FAQ" element={<FAQSystem />} />
