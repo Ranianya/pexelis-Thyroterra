@@ -63,6 +63,7 @@ model Spot {
 
   userProgress UserProgress[]
   days         Day[]
+  monthlyProgressDisplays MonthlyProgressDisplay[]
 }
 
 model Day {
@@ -93,12 +94,14 @@ model UserProgress {
 }
 
 model MonthlyProgressDisplay {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  month     Int
-  createdAt DateTime @default(now())
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  spotId             Int
+  progressPercentage Int      @default(0)
+  user               User     @relation(fields: [userId], references: [id])
+  spot               Spot     @relation(fields: [spotId], references: [id])
 
-  user User @relation(fields: [userId], references: [id])
+  @@unique([userId, spotId]) // 👈 ADD THIS LINE
 }
 
 //////////////////////////////////////////////////

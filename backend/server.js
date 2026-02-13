@@ -6,6 +6,9 @@ import routineRoutes from "./routes/routineRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import landRoutes from "./routes/landRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import monthlyRoutes from "./routes/monthlyRoutes.js";
 
 
 dotenv.config();
@@ -19,6 +22,10 @@ app.use("/api/routine", routineRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/game", gameRoutes);
 app.use("/api/auth", authRoutes);
+console.log("Loading Lands Routes...");
+app.use("/api/lands", landRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/monthly", monthlyRoutes);
 app.get("/", (req, res) => {
   res.send("PEXELIS Backend Running 🚀");
 });
