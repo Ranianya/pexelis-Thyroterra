@@ -226,8 +226,8 @@ const FAQSystem = () => {
 
         {/* NAVIGATION DESKTOP (Visible uniquement sur large écran) */}
         <nav className="hidden md:flex items-center gap-8 bg-[#f1e4c3] backdrop-blur-md px-8 py-3 rounded-2xl border-2 border-[#b89a67] shadow-[0_8px_0_0_#b89a67]">
-          <button onClick={() => navigate('/home')} className="text-xs font-black hover:text-[#5A7554] transition-colors uppercase tracking-widest">Home</button>
-          <button onClick={() => navigate('/story')} className="text-xs font-black hover:text-[#5A7554] transition-colors uppercase tracking-widest">Story</button>
+          <button onClick={() => navigate('/')} className="text-xs font-black hover:text-[#5A7554] transition-colors uppercase tracking-widest">Home</button>
+          <button onClick={() => navigate('/')} className="text-xs font-black hover:text-[#5A7554] transition-colors uppercase tracking-widest">Story</button>
           <button onClick={handleBack} className="text-xs font-black text-[#A37803] border-b-2 border-[#A37803] uppercase tracking-widest">FAQ</button>
         </nav>
 
@@ -259,10 +259,10 @@ const FAQSystem = () => {
               exit={{ opacity: 0, y: -20 }}
               className="absolute top-20 right-4 w-48 bg-[#f1e4c3] border-4 border-[#b89a67] rounded-xl shadow-[0_8px_0_0_#b89a67] p-2 flex flex-col gap-1 md:hidden overflow-hidden"
             >
-              <button onClick={() => navigate('/home')} className="flex items-center gap-3 p-3 hover:bg-[#8b8e4b]/20 rounded-lg font-black text-xs uppercase tracking-tighter">
+              <button onClick={() => navigate('hero')} className="flex items-center gap-3 p-3 hover:bg-[#8b8e4b]/20 rounded-lg font-black text-xs uppercase tracking-tighter">
                 <Home size={16} /> Home
               </button>
-              <button onClick={() => navigate('/story')} className="flex items-center gap-3 p-3 hover:bg-[#8b8e4b]/20 rounded-lg font-black text-xs uppercase tracking-tighter">
+              <button onClick={() => navigate('story')} className="flex items-center gap-3 p-3 hover:bg-[#8b8e4b]/20 rounded-lg font-black text-xs uppercase tracking-tighter">
                 <BookOpen size={16} /> Story
               </button>
               <button onClick={handleBack} className="flex items-center gap-3 p-3  text-[#A37803] rounded-lg font-black text-xs uppercase tracking-tighter ">

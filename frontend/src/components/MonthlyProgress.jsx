@@ -578,6 +578,16 @@ const MonthlyProgress = ({ monthlyStats }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+    const navLinks = [
+    { name: "HOME", path: "/" },
+    { name: "FOREST", path: "/years" },
+    { name: "LAND", path: "/months" },
+    { name: "PROGRES", path: "/days" }, // Corrigé 'PROGRES' -> 'PROGRESS' si tu préfères
+    { name: "TODAY", path: "/dashboard" },
+    { name: "MONTH", path: "/monthly-progress" },
+    { name: "TASKS", path: "/checklist" },
+  ];
+
   const stats = useMemo(() => monthlyStats || [
     { id: 'activities', label: 'Activities', icon: <Activity size={18} />, progress: 40, position: 'top-left' },
     { id: 'doctor', label: 'Doctor', icon: <Stethoscope size={18} />, progress: 90, position: 'top-right' },
@@ -622,21 +632,26 @@ const MonthlyProgress = ({ monthlyStats }) => {
 
         {/* Navbar Capsule au milieu */}
         <nav className="flex-grow max-w-xl relative">
-          <div className="bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-[40px] px-6 py-2 flex justify-between items-center shadow-[4px_4px_0_0_#b89a67] relative z-50">
+          <div className="bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-[40px] px-6 py-2 flex justify-between items-center shadow-[0_8px_0_0_#b89a67] z-50 relative">
             
             {/* Desktop Links */}
             <div className="hidden md:flex justify-around w-full">
-              {["HOME", "FOREST", "LAND", "PROGRES","TODAY" ,"MONTH","TASKS"].map((item) => (
-                <button key={item} className="text-[11px] font-black text-black hover:scale-110 transition-transform uppercase px-2">
-                  {item}
+              {navLinks.map((link) => (
+                <button 
+                  key={link.name} 
+                  onClick={() => navigate(link.path)}
+                  className="text-[10px] font-black text-black hover:scale-110 transition-transform uppercase px-2 cursor-pointer"
+                >
+                  {link.name}
                 </button>
               ))}
             </div>
 
             {/* Mobile Toggle */}
             <div className="md:hidden flex justify-center w-full">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black font-black text-[10px] flex items-center gap-2">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black font-black text-[10px] flex items-center justify-center gap-2">
                 {isMenuOpen ? <X size={18} /> : <Menu size={18} />} 
+                <span className="ml-1 uppercase">Menu</span>
               </button>
             </div>
           </div>
@@ -650,8 +665,17 @@ const MonthlyProgress = ({ monthlyStats }) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="absolute top-full left-0 right-0 mt-2 bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-2xl p-4 shadow-[4px_4px_0_0_#b89a67] z-40 md:hidden flex flex-col gap-3 items-center"
               >
-                {["HOME", "FOREST", "LAND", "PROGRES","TODAY" ,"MONTH","TASKS"].map((item) => (
-                  <button key={item} onClick={() => setIsMenuOpen(false)} className="font-black text-black text-xs uppercase">{item}</button>
+                {navLinks.map((link) => (
+                  <button 
+                    key={link.name} 
+                    onClick={() => {
+                      navigate(link.path);
+                      setIsMenuOpen(false); // Ferme le menu après le clic
+                    }} 
+                    className="font-black text-stone-800 text-xs uppercase hover:text-green-700 transition-colors"
+                  >
+                    {link.name}
+                  </button>
                 ))}
               </motion.div>
             )}
