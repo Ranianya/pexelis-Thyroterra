@@ -35,6 +35,12 @@ model User {
   progress       UserProgress[]
   monthlyDisplay MonthlyProgressDisplay[]
 
+  // All habits the user has checked or added
+  habits         UserHabit[]
+
+  // Private habits created by the user
+  privateHabits  Habit[] @relation("UserPrivateHabits")
+
   createdAt DateTime @default(now())
 }
 
@@ -55,23 +61,35 @@ model Spot {
   land Land @relation(fields: [landId], references: [id])
   currentSpotUsers User[] @relation("CurrentSpot")
 
-  // Relation with UserProgress
   userProgress UserProgress[]
+  days         Day[]
 }
 
-model UserProgress {
-  id        Int            @id @default(autoincrement())
-  userId    Int
+model Day {
+  id        Int    @id @default(autoincrement())
   spotId    Int
-  habitId   Int
-  dayNumber Int
-  status    ProgressStatus @default(completed)
-  
+  dayNumber Int    // 1-31
+
+  spot      Spot @relation(fields: [spotId], references: [id])
+  progress  UserProgress[]
+
+  @@unique([spotId, dayNumber])
+}
+
+model UserProgress { 
+  id      Int            @id @default(autoincrement())
+  userId  Int
+  spotId  Int
+  habitId Int
+  dayId   Int
+  status  ProgressStatus @default(missed)
+
   user  User  @relation(fields: [userId], references: [id])
   spot  Spot  @relation(fields: [spotId], references: [id])
   habit Habit @relation(fields: [habitId], references: [id])
+  day   Day   @relation(fields: [dayId], references: [id])
 
-  @@unique([userId, habitId, spotId, dayNumber])
+  @@unique([userId, habitId, dayId])
 }
 
 model MonthlyProgressDisplay {
@@ -95,13 +113,32 @@ model HabitCategory {
 }
 
 model Habit {
-  id         Int           @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   categoryId Int
   taskName   String
-  check      Boolean       @default(false)
+  userId     Int?   // null = global, number = private
 
   category HabitCategory @relation(fields: [categoryId], references: [id])
-  progress UserProgress[]
+
+  // Private habits relation to user
+  user User? @relation("UserPrivateHabits", fields: [userId], references: [id], map: "FK_Habit_User")
+
+  progress   UserProgress[]
+  userHabits UserHabit[]
+}
+
+model UserHabit {
+  id      Int @id @default(autoincrement())
+
+  userId  Int
+  habitId Int
+
+  isChecked Boolean @default(false)
+
+  user  User  @relation(fields: [userId], references: [id])
+  habit Habit @relation(fields: [habitId], references: [id])
+
+  @@unique([userId, habitId])
 }
 
 //////////////////////////////////////////////////

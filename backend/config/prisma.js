@@ -1,6 +1,6 @@
-
-
-import { PrismaClient } from "@prisma/client";
+// backend/prisma.js
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 
 const prisma = new PrismaClient();
 

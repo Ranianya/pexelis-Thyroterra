@@ -76,3 +76,16 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// ---------------- LOGOUT ----------------
+export const logout = async (req, res) => {
+  try {
+    // With JWT, logout = client deletes token
+    res.json({
+      message: "Logged out successfully"
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
