@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, Plus, Trash2, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
@@ -78,60 +78,50 @@ const CheckList = ({ onAddToRoutine }) => {
   };
 
   const handleFinalSubmit = () => {
-    const selectedTasks = [...coreRitual, ...wellnessForest].filter(t => t.checked);
+    // Gather checked items and format to pass back to dashboard
+    const selectedTasks = [...coreRitual, ...wellnessForest]
+      .filter(t => t.checked)
+      .map(t => ({
+        id: t.id,
+        title: t.text.toUpperCase(),
+        desc: t.icon ? t.icon : "",
+        icon: t.icon || "⭐",
+        action: "COMPLETE",
+        completed: false,
+        isCustom: !t.isDefault
+      }));
+
+    // Save to localStorage and pass back
+    localStorage.setItem('thyroterra-tasks', JSON.stringify(selectedTasks));
     if (onAddToRoutine) onAddToRoutine(selectedTasks);
     navigate("/dashboard");
   };
 
-  // Variantes pour les listes
-  const listContainer = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-
-  const listItem = {
-    hidden: { x: -20, opacity: 0 },
-    show: { x: 0, opacity: 1 }
-  };
+  // Animations
+  const listContainer = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+  const listItem = { hidden: { x: -20, opacity: 0 }, show: { x: 0, opacity: 1 } };
 
   return (
     <div className="min-h-screen bg-[url('./bg.png')] bg-cover font-pixel p-4 flex flex-col items-center relative overflow-x-hidden">
-
-      {/* --- HEADER --- */}
+      {/* HEADER */}
       <header className="w-full max-w-6xl flex items-center justify-between mb-8 gap-4 z-50">
         <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 cursor-pointer" onClick={() => navigate('/')}>
           <img src="./logo.png" alt="logo" className="w-full h-full object-contain" />
         </motion.div>
-
         <nav className="flex-grow max-w-xl relative">
           <div className="bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-[40px] px-6 py-2 flex justify-between items-center shadow-[0_8px_0_0_#b89a67] z-50 relative">
             <div className="hidden md:flex justify-around w-full">
               {navLinks.map((link) => (
-                <button key={link.name} onClick={() => navigate(link.path)} className="text-[10px] font-black text-black hover:scale-110 transition-transform uppercase px-2 cursor-pointer">
-                  {link.name}
-                </button>
+                <button key={link.name} onClick={() => navigate(link.path)} className="text-[10px] font-black text-black hover:scale-110 transition-transform uppercase px-2 cursor-pointer">{link.name}</button>
               ))}
             </div>
             <div className="md:hidden flex justify-center w-full">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black font-black text-[10px] flex items-center gap-2">
-                {isMenuOpen ? <X size={18} /> : <Menu size={18} />} 
-                <span className="ml-1 uppercase">Menu</span>
+                {isMenuOpen ? <X size={18} /> : <Menu size={18} />} <span className="ml-1 uppercase">Menu</span>
               </button>
             </div>
           </div>
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-full left-0 right-0 mt-2 bg-[#f1e4c3] border-[3px] border-[#b89a67] rounded-2xl p-4 shadow-[4px_4px_0_0_#b89a67] z-40 md:hidden flex flex-col gap-3 items-center">
-                {navLinks.map((link) => (
-                  <button key={link.name} onClick={() => { navigate(link.path); setIsMenuOpen(false); }} className="font-black text-stone-800 text-xs uppercase hover:text-green-700 transition-colors">
-                    {link.name}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </nav>
-
         <div className="flex-shrink-0">
           <motion.button whileHover={{ scale: 1.1, rotate: 15 }} onClick={() => { localStorage.clear(); window.location.reload(); }} className="bg-black p-2.5 rounded-lg text-white shadow-[3px_3px_0_0_#5A7554]">
             <RotateCcw size={20} />
@@ -139,16 +129,14 @@ const CheckList = ({ onAddToRoutine }) => {
         </div>
       </header>
 
-      {/* --- TITLE WITH TYPEWRITER --- */}
+      {/* TITLE */}
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-2xl bg-white border-4 border-[#D4AF37] rounded-xl p-3 mb-8 text-center shadow-[0_6px_0_0_#B8860B] z-10">
-        <h1 className="text-sm md:text-lg font-black text-stone-800 uppercase">
-             Select what you want to add to your health routine
-        </h1>
+        <h1 className="text-sm md:text-lg font-black text-stone-800 uppercase">Select what you want to add to your health routine</h1>
       </motion.div>
 
+      {/* TASK LISTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mb-24 z-10">
-        
-        {/* Core Ritual Section */}
+        {/* Core Ritual */}
         <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex flex-col items-center gap-4">
           <div className="bg-[#f1e4c3] border-4 border-[#D4AF37] rounded-xl p-5 w-full shadow-lg min-h-[380px]">
             <h2 className="text-[#E67E22] font-black text-lg mb-4 italic">2. The Core Ritual</h2>
@@ -165,11 +153,7 @@ const CheckList = ({ onAddToRoutine }) => {
                           <Trash2 size={16} />
                         </button>
                       )}
-                      <motion.div 
-                        whileTap={{ scale: 0.8 }}
-                        onClick={() => toggleCheck('core', item.id)} 
-                        className={`w-6 h-6 border-2 border-stone-800 rounded cursor-pointer flex items-center justify-center transition-colors ${item.checked ? 'bg-[#89C33D]' : 'bg-white'}`}
-                      >
+                      <motion.div whileTap={{ scale: 0.8 }} onClick={() => toggleCheck('core', item.id)} className={`w-6 h-6 border-2 border-stone-800 rounded cursor-pointer flex items-center justify-center transition-colors ${item.checked ? 'bg-[#89C33D]' : 'bg-white'}`}>
                         {item.checked && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><Check size={16} className="text-white stroke-[4px]" /></motion.div>}
                       </motion.div>
                     </div>
@@ -178,12 +162,10 @@ const CheckList = ({ onAddToRoutine }) => {
               </AnimatePresence>
             </motion.div>
           </div>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setIsAdding('core')} className="bg-[#f1e4c3] border-2 border-stone-800 px-6 py-1 rounded shadow-[3px_3px_0_0_#5A7554] font-bold">
-            + Add
-          </motion.button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setIsAdding('core')} className="bg-[#f1e4c3] border-2 border-stone-800 px-6 py-1 rounded shadow-[3px_3px_0_0_#5A7554] font-bold">+ Add</motion.button>
         </motion.div>
 
-        {/* Wellness Forest Section */}
+        {/* Wellness Forest */}
         <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex flex-col items-center gap-4">
           <div className="bg-[#f1e4c3] border-4 border-[#D4AF37] rounded-xl p-5 w-full shadow-lg min-h-[380px]">
             <h2 className="text-[#E67E22] font-black text-lg mb-4 italic">1. The Wellness Forest</h2>
@@ -201,11 +183,7 @@ const CheckList = ({ onAddToRoutine }) => {
                           <Trash2 size={16} />
                         </button>
                       )}
-                      <motion.div 
-                        whileTap={{ scale: 0.8 }}
-                        onClick={() => toggleCheck('wellness', item.id)} 
-                        className={`w-6 h-6 border-2 border-stone-800 rounded cursor-pointer flex items-center justify-center transition-colors ${item.checked ? 'bg-[#89C33D]' : 'bg-white'}`}
-                      >
+                      <motion.div whileTap={{ scale: 0.8 }} onClick={() => toggleCheck('wellness', item.id)} className={`w-6 h-6 border-2 border-stone-800 rounded cursor-pointer flex items-center justify-center transition-colors ${item.checked ? 'bg-[#89C33D]' : 'bg-white'}`}>
                         {item.checked && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><Check size={16} className="text-white stroke-[4px]" /></motion.div>}
                       </motion.div>
                     </div>
@@ -214,13 +192,11 @@ const CheckList = ({ onAddToRoutine }) => {
               </AnimatePresence>
             </motion.div>
           </div>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setIsAdding('wellness')} className="bg-[#f1e4c3] border-2 border-stone-800 px-6 py-1 rounded shadow-[3px_3px_0_0_#5A7554] font-bold">
-            + Add
-          </motion.button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setIsAdding('wellness')} className="bg-[#f1e4c3] border-2 border-stone-800 px-6 py-1 rounded shadow-[3px_3px_0_0_#5A7554] font-bold">+ Add</motion.button>
         </motion.div>
       </div>
 
-      {/* Modale d'ajout */}
+      {/* Modal to Add */}
       <AnimatePresence>
         {isAdding && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
@@ -236,26 +212,12 @@ const CheckList = ({ onAddToRoutine }) => {
         )}
       </AnimatePresence>
 
-      {/* Button: Final Submission */}
+      {/* Final Submission Button */}
       <div className="fixed bottom-8 right-8 z-50">
-        <motion.button 
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleFinalSubmit}
-          className="bg-[#f1e4c3] border-4 border-[#5A7554] px-6 py-3 rounded-xl font-black text-stone-800 shadow-[0_6px_0_0_#5A7554] flex items-center gap-2"
-        >
+        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} onClick={handleFinalSubmit} className="bg-[#f1e4c3] border-4 border-[#5A7554] px-6 py-3 rounded-xl font-black text-stone-800 shadow-[0_6px_0_0_#5A7554] flex items-center gap-2">
           <Plus size={20} /> ADD TO THE ROUTINE
         </motion.button>
       </div>
-
-      {/* Character Animation */}
-      <motion.div 
-        animate={{ y: [0, -4, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-12 left-10 z-20 w-20 h-20 pointer-events-none"
-      >
-        <img src="/mario.png" alt="character" className="w-full h-full object-contain" />
-      </motion.div>
     </div>
   );
 };
